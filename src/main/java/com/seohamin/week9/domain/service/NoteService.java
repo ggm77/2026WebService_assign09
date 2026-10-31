@@ -85,21 +85,10 @@ public class NoteService {
             note.updateTitle(noteRequest.title());
         }
 
-        if (noteRequest.content() != null && !noteRequest.content().isBlank()) {
-            note.updateContent(noteRequest.content());
-        }
-
-        if (noteRequest.author() != null && !noteRequest.author().isBlank()) {
-            note.updateAuthor(noteRequest.author());
-        }
-
-        if (noteRequest.category() != null && !noteRequest.category().isBlank()) {
-            note.updateCategory(noteRequest.category());
-        }
-
-        if (noteRequest.hashTag() != null && !noteRequest.hashTag().isBlank()) {
-            note.updateHashTag(noteRequest.hashTag());
-        }
+        note.updateContent(noteRequest.content());
+        note.updateAuthor(noteRequest.author());
+        note.updateCategory(noteRequest.category());
+        note.updateHashTag(noteRequest.hashTag());
 
         return NoteResponse.of(note);
     }

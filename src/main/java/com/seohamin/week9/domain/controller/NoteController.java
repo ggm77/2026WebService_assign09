@@ -39,7 +39,7 @@ public class NoteController {
         return ResponseEntity.ok().body(noteService.getAllNote());
     }
 
-    @PatchMapping("/notes/{id}")
+    @PutMapping("/notes/{id}")
     public ResponseEntity<NoteResponse> updateNote(
             @PathVariable(value = "id") final String idStr,
             @RequestBody final NoteRequest noteRequest
