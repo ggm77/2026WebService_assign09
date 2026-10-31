@@ -1,4 +1,4 @@
-package com.seohamin.week9.dto;
+package com.seohamin.week9.domain.dto;
 
 public record NoteRequest(
         String title,
