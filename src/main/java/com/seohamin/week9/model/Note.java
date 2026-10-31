@@ -1,6 +1,9 @@
 package com.seohamin.week9.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "note_sql")
@@ -24,6 +27,10 @@ public class Note {
     @Column(length = 100, nullable = true)
     private String hashTag;
 
+    @CreatedDate
+    @Column(nullable = false)
+    private Instant createdAt;
+
     public Long getId() {
         return id;
     }
@@ -46,5 +53,9 @@ public class Note {
 
     public String getHashTag() {
         return hashTag;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 }
