@@ -77,14 +77,21 @@ public class NoteService {
         if (id == null) {
             throw new CustomException(ExceptionCode.ID_NOT_FOUND);
         }
+        if (
+                noteRequest == null
+                || noteRequest.title() == null || noteRequest.title().isBlank()
+                || noteRequest.content() == null || noteRequest.content().isBlank()
+                || noteRequest.author() == null || noteRequest.author().isBlank()
+                || noteRequest.category() == null || noteRequest.category().isBlank()
+                || noteRequest.hashTag() == null || noteRequest.hashTag().isBlank()
+        ) {
+            throw new CustomException(ExceptionCode.INVALID_REQUEST);
+        }
 
         final Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionCode.ID_NOT_FOUND));
 
-        if (noteRequest.title() != null && !noteRequest.title().isBlank()) {
-            note.updateTitle(noteRequest.title());
-        }
-
+        note.updateTitle(noteRequest.title());
         note.updateContent(noteRequest.content());
         note.updateAuthor(noteRequest.author());
         note.updateCategory(noteRequest.category());
