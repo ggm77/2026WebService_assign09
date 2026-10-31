@@ -2,6 +2,7 @@
 
 - **Render Deployment URL**: https://two026webservice-assign09.onrender.com
 - **GitHub Repository URL (Organization)**: https://github.com/2026-2-WebService/assign09-c01-22300378
+- **GitHub Repository URL (Personal)**: https://github.com/ggm77/2026WebService_assign09.git
 
 ## ① 프로젝트 소개
 
