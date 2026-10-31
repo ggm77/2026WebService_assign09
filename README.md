@@ -224,7 +224,7 @@ Spring Boot의 기본 네이밍 전략에 따라 camelCase 필드가 snake_case 
 | author | author | varchar(100) not null |
 | category | category | varchar(100) not null |
 | hashTag | hash_tag | varchar(100) |
-| createdAt | created_at | not null |
+| createdAt | created_at | datetime(6) not null |
 
 실제 생성된 컬럼(`hash_tag`, `created_at` 등)은 아래 ⑤ MariaDB 데이터 저장 확인 화면에서 볼 수 있습니다.
 
@@ -243,9 +243,30 @@ Spring Boot의 기본 네이밍 전략에 따라 camelCase 필드가 snake_case 
 수정 API는 `findById()`로 가져온 엔티티의 값을 바꾸는 방식으로 구현했고, 실행하면 Hibernate가 UPDATE SQL을 실행합니다.
 
 ### 실제 Hibernate SQL
-`spring.jpa.show-sql=true` 설정으로 IntelliJ 콘솔에 출력된 SQL입니다.
+`spring.jpa.show-sql=true` 설정으로 출력된 SQL입니다. (Render 로그, ⑤ 배포 URL CRUD 테스트 실행 시)
 
-<!-- TODO: 콘솔 로그 붙여넣기 / 캡처 (INSERT, SELECT, UPDATE, DELETE) -->
+**애플리케이션 최초 실행 — `ddl-auto=update`로 테이블 자동 생성**
+```sql
+Hibernate: create table note_sql (id bigint not null auto_increment, author varchar(100) not null, category varchar(100) not null, content varchar(2048) not null, created_at datetime(6) not null, hash_tag varchar(100), title varchar(100) not null, primary key (id)) engine=InnoDB
+```
+
+**CRUD 요청별 SQL**
+
+| 요청 | JpaRepository | Hibernate SQL |
+|---|---|---|
+| `POST /api/v1/notes` | `save()` | `insert into note_sql (author,category,content,created_at,hash_tag,title) values (?,?,?,?,?,?)` |
+| `GET /api/v1/notes` | `findAll()` | `select n1_0.id,n1_0.author,n1_0.category,n1_0.content,n1_0.created_at,n1_0.hash_tag,n1_0.title from note_sql n1_0` |
+| `GET /api/v1/notes/2` | `findById()` | `select ... from note_sql n1_0 where n1_0.id=?` |
+| `PUT /api/v1/notes/2` | `findById()` | `select ... from note_sql n1_0 where n1_0.id=?` |
+| | 값 변경 | `update note_sql set author=?,category=?,content=?,created_at=?,hash_tag=?,title=? where id=?` |
+| `DELETE /api/v1/notes/2` | `existsById()` | `select count(*) from note_sql n1_0 where n1_0.id=?` |
+| | `deleteById()` | `select ... from note_sql n1_0 where n1_0.id=?` |
+| | | `delete from note_sql where id=?` |
+| `POST` (필수 값 누락) | — | SQL 없음 (서비스에서 검증 후 400 응답) |
+
+- `deleteById()`는 내부에서 먼저 `findById()`로 조회한 뒤 DELETE를 실행해서, 삭제 한 번에 SELECT가 2번(`existsById` + 내부 조회) 실행됩니다.
+- 수정 시 바뀐 컬럼만이 아니라 모든 컬럼을 UPDATE합니다.
+- 필수 값이 빠진 요청은 DB에 가기 전에 서비스에서 막히므로 SQL이 실행되지 않습니다.
 
 ### SQL 직접 작성 방식과 JPA 방식의 차이
 | | SQL 직접 작성 | JPA |
