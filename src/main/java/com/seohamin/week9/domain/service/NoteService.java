@@ -109,6 +109,10 @@ public class NoteService {
             throw new CustomException(ExceptionCode.ID_NOT_FOUND);
         }
 
+        if (!noteRepository.existsById(id)) {
+            throw new CustomException(ExceptionCode.ID_NOT_FOUND);
+        }
+
         noteRepository.deleteById(id);
     }
 }

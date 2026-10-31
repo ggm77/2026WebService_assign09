@@ -2,11 +2,13 @@ package com.seohamin.week9.domain.model;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "note_sql")
+@EntityListeners(AuditingEntityListener.class)
 public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
